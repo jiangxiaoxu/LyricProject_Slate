@@ -10,13 +10,13 @@
 
 void ALrcHUD::PostInitializeComponents()
 {
-	  Super::PostInitializeComponents();
-	  
-	  GEngine->GameViewport->AddViewportWidgetContent(SNew(SWeakWidget).PossiblyNullContent(
-		  SAssignNew(MyWidget, SLrcMenuWidget)
-		  .OwnerHUD(this)
-		  .Intext_Lambda([this]{return FText::AsNumber(static_cast<int32>(TimeCalcu));})
-	  ));
+	Super::PostInitializeComponents();
+
+	GEngine->GameViewport->AddViewportWidgetContent(SNew(SWeakWidget).PossiblyNullContent(
+		SAssignNew(MyWidget, SLrcMenuWidget)
+		.OwnerHUD(this)
+		.Intext_Lambda([ this ] {return  FText::FromString(FString::Printf(TEXT("%.2f"), TimeCalcu));  })
+	));
 }
 
 void ALrcHUD::BeginPlay()

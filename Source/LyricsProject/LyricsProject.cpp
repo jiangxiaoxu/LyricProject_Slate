@@ -2,7 +2,7 @@
 
 #include "LyricsProject.h"
 #include "AssetTypeActions_LyricAsset.h"
-#include "LrcWidgetStyle.h"
+#include "LyricProjectWidgetStyles.h"
 
 //IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, LyricsProject, "LyricsProject" );
 
