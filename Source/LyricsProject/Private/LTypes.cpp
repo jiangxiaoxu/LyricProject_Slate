@@ -12,8 +12,7 @@ void ULyricAsset::LoadFromString(const FString& InStr)
 	this->Title = FString();
 	this->LineArray.Reset();
 
-	FRotator().Quaternion().GetAxisX();
-//	this->TimeOffset = 0.0f;
+
 	{
 		const FRegexPattern myPattern(R"(\[(\d{2}:\d{2}\.\d{2})\].*)");
 

@@ -59,6 +59,14 @@ void SLrcMenuWidget::Construct(const FArguments& InArgs)
 					  ]
 					]
 				  ]
+				  +SOverlay::Slot()
+				  .HAlign(HAlign_Center)
+				  .VAlign(VAlign_Center)
+				  [
+					  SNew(STextBlock)
+					  .Text(InArgs._LyricLineText)
+					  .Font(FSlateFontInfo("Arial", 30))
+				  ]
 		];
 }
 

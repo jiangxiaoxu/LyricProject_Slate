@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/HUD.h"
+#include "LTypes.h"
 #include "LrcHUD.generated.h"
 
 /**
@@ -18,6 +19,8 @@ class LYRICSPROJECT_API ALrcHUD : public AHUD
 	
 	
 public:
+	ALrcHUD();
+
 	TSharedPtr<class SWidget>	 MyWidget;
 
 	virtual void PostInitializeComponents()override;
@@ -27,9 +30,23 @@ public:
 
 	virtual void Tick( float DeltaSeconds )override;
 
-	float TimeCalcu=0;
 	
+	UPROPERTY(VisibleAnywhere, Category = "Audio")
+	UAudioComponent*  AudioComp;
 
 
+	float StartTime = -1;
+
+	float SoundDuration = -1;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Audio")
+	ULyricAsset*   LyricAsset;
+
+	UFUNCTION( BlueprintCallable, Category = "Audio")
+	void PlaySound();
+
+	float GetPlayedSeconds()const;
+
+	FText GetLyricText()const;
 
 };

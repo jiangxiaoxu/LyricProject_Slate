@@ -15,6 +15,8 @@ class LYRICSPROJECT_API SLrcMenuWidget :public SCompoundWidget
 
 		SLATE_ATTRIBUTE(FText,Intext)
 
+		SLATE_ATTRIBUTE(FText,LyricLineText)
+
 		SLATE_END_ARGS()
 
 public:
