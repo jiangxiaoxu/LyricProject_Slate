@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "LyricsProject.h"
 #include "LrcHUD.h"
@@ -12,6 +12,14 @@ ALrcHUD::ALrcHUD()
 {
 	AudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("MyAudioComponent"));
 	AudioComp->bAutoActivate = false;
+
+	//ConstructorHelpers::FObjectFinder<USoundCue> MyTestSound (TEXT("SoundWave'/Game/青空のナミダ.青空のナミダ'")) ;
+
+	//if (MyTestSound.Succeeded())
+	//{
+	//	AudioComp->SetSound(MyTestSound.Object)   ;
+	//}
+
 }
 
 void ALrcHUD::PostInitializeComponents()
@@ -32,8 +40,7 @@ void ALrcHUD::BeginPlay()
 		GEngine->GameViewport->AddViewportWidgetContent(SNew(SWeakWidget).PossiblyNullContent(
 			SAssignNew(MyWidget, SLrcMenuWidget)
 			.OwnerHUD(this)
-			.Intext_Lambda([ this ] {return  FText::FromString(FString::Printf(TEXT("%.1f"), GetPlayedSeconds()));  })
-			.LyricLineText_UObject(this,&ALrcHUD::GetLyricText)
+			.PlayedSeconds_UObject(this,&ALrcHUD::GetPlayedSeconds)
 		));
 	}
 

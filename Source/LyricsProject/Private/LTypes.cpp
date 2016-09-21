@@ -34,12 +34,26 @@ void ULyricAsset::LoadFromString(const FString& InStr)
 
 			if (!TextString.IsEmpty())
 			{
-				this->LineArray.Add({ Secends,TextString });
+				this->LineArray.Add({ Secends,-1,TextString });
 			}
 		}
 	}
 
 	this->LineArray.StableSort([](const FLyricLine& A, const FLyricLine& B) {  return A.StartTime < B.StartTime;  });
+
+
+	for (int32 i=0;i<LineArray.Num();i++)
+	{
+	    if (i+1<LineArray.Num())
+	    {
+			LineArray[i].EndTime= LineArray[i + 1].StartTime;
+		}
+		else
+		{
+			LineArray[i].EndTime = LineArray[i].StartTime + 100;
+		}
+
+	}
 
 }
 

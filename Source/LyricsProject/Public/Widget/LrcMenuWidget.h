@@ -6,26 +6,34 @@
  * 
  */
 
+
 class LYRICSPROJECT_API SLrcMenuWidget :public SCompoundWidget
 {
 
-		SLATE_BEGIN_ARGS(SLrcMenuWidget){ }
+	SLATE_BEGIN_ARGS(SLrcMenuWidget) {}
 
-		SLATE_ARGUMENT(TAutoWeakObjectPtr<class ALrcHUD>,OwnerHUD)
+	SLATE_ARGUMENT(TAutoWeakObjectPtr<class ALrcHUD>, OwnerHUD)
 
-		SLATE_ATTRIBUTE(FText,Intext)
+	SLATE_ATTRIBUTE(float, PlayedSeconds)
 
-		SLATE_ATTRIBUTE(FText,LyricLineText)
-
-		SLATE_END_ARGS()
+	SLATE_END_ARGS()
 
 public:
-	 void Construct(const FArguments& InArgs);
+	void Construct(const FArguments& InArgs);
 
-	 TAutoWeakObjectPtr<class ALrcHUD> OwnerHUD;
-
+	
 
 private:
-    void BuildLyricLine(TSharedRef<SScrollBox> InPanel)	 ;
 
+	void	BuildLyricLine();
+
+	EActiveTimerReturnType UpdateScrollTo(double InCurrentTime, float InDeltaTime);
+
+	TAutoWeakObjectPtr<class ALrcHUD> OwnerHUD;
+
+	TSharedPtr<SScrollBox>  ContainBox;
+
+	TArray<TSharedRef<STextBlock>>	 Lines;
+
+	TAttribute<float> PlayedSeconds;
 };

@@ -15,6 +15,9 @@ public:
 		float StartTime;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Lyric")
+		float EndTime;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Lyric")
 		FString StringBody;
 
 };
