@@ -9,7 +9,7 @@
 class LYRICSPROJECT_API SLrcMenuWidget :public SCompoundWidget
 {
 
-	SLATE_BEGIN_ARGS(SLrcMenuWidget){ }
+		SLATE_BEGIN_ARGS(SLrcMenuWidget){ }
 
 		SLATE_ARGUMENT(TAutoWeakObjectPtr<class ALrcHUD>,OwnerHUD)
 
@@ -23,5 +23,9 @@ public:
 	 void Construct(const FArguments& InArgs);
 
 	 TAutoWeakObjectPtr<class ALrcHUD> OwnerHUD;
+
+
+private:
+    void BuildLyricLine(TSharedRef<SScrollBox> InPanel)	 ;
 
 };

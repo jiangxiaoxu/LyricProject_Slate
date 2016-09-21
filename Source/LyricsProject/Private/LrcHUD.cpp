@@ -36,6 +36,7 @@ void ALrcHUD::BeginPlay()
 			.LyricLineText_UObject(this,&ALrcHUD::GetLyricText)
 		));
 	}
+
 }
 
 void ALrcHUD::Tick(float DeltaSeconds)
@@ -46,6 +47,8 @@ void ALrcHUD::Tick(float DeltaSeconds)
 
 void ALrcHUD::PlaySound()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Yellow, TEXT("PlaySound start"));
+
 	if (AudioComp&&AudioComp->Sound)
 	{
 		SoundDuration = AudioComp->Sound->Duration;

@@ -8,15 +8,17 @@
 
 void SLrcMenuWidget::Construct(const FArguments& InArgs)
 {
-	bCanTick = false;
+	//bCanTick = false;
 
 	OwnerHUD = InArgs._OwnerHUD;
 
 	auto TheStyle = &FLyricProjectWidgetStyles::Get().GetWidgetStyle<FLyricWidgetStyle>("Style1");
 
+	TSharedPtr<SScrollBox>  ContainBox;
+
 	ChildSlot
-		[
-		  SNew(SOverlay) 
+		[						
+		  SNew(SOverlay)
 		  +SOverlay::Slot()
 			.HAlign(HAlign_Center)
 			.VAlign(VAlign_Top)
@@ -28,46 +30,56 @@ void SLrcMenuWidget::Construct(const FArguments& InArgs)
 				.Font(TheStyle->FontInfo )
 				.Text(InArgs._Intext)
 			]
-			 +SOverlay::Slot()
-				.HAlign(HAlign_Right)
-				 .VAlign(VAlign_Bottom)
-				  [
-					SNew(SBox)
-					.WidthOverride(400)
-					.HeightOverride(400)
+			+SOverlay::Slot()
+			.HAlign(HAlign_Center)
+			.VAlign(VAlign_Center)
+				[
+				   SNew(SBox)
+				//   .WidthOverride(400)
+				   .HeightOverride(200)
 					[
-					  SNew(SVerticalBox)
-					  + SVerticalBox::Slot()
-						[
-							SNew(SButton)
-						//	.Text(FText::FromString("Button 1"))
-							.OnClicked_Lambda([ this ] { GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Yellow, TEXT("Button 1 clicked ")); return FReply::Handled(); })
-							.HAlign(HAlign_Center)
-							.VAlign(VAlign_Center)
-							[
-							  SNew(STextBlock)
-							  .Text(FText::FromString("trwwww 1"))
-							  .Font(FSlateFontInfo("Arial",50)		)
-							]
-						]
-					 + SVerticalBox::Slot()
-					  [
-						 SNew(SButton)
-						 .Text(FText::FromString("Button 2"))
-						 .OnClicked_Lambda([ this ] { GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Yellow, TEXT("Button 2 clicked ")); return FReply::Handled(); })
-						 .ToolTipText(FText::FromString("Sample text"))
-					  ]
-					]
-				  ]
-				  +SOverlay::Slot()
-				  .HAlign(HAlign_Center)
-				  .VAlign(VAlign_Center)
-				  [
-					  SNew(STextBlock)
-					  .Text(InArgs._LyricLineText)
-					  .Font(FSlateFontInfo("Arial", 30))
-				  ]
+						SAssignNew(ContainBox, SScrollBox)
+				    ]
+				]
 		];
+
+	BuildLyricLine(ContainBox.ToSharedRef());
+
 }
 
+void SLrcMenuWidget::BuildLyricLine(TSharedRef<SScrollBox> InPanel)
+{
+   
+   TSharedPtr<SWidget> LastTextWidget;
+
+	for (int32 i = 0; i < 20; i++)
+	{
+		auto LineWidget = SNew(STextBlock)
+			.Text(FText::FromString(FString::Printf(TEXT(" that is  %i line "), i)))
+			.Font(FSlateFontInfo("Arial", 50));
+
+		InPanel->AddSlot()
+		.HAlign(HAlign_Center)
+		.VAlign(VAlign_Center)
+		[
+			LineWidget
+		];
+
+		if (i==19)
+		{
+			LastTextWidget= LineWidget;
+		}
+   }
+	
+
+	 RegisterActiveTimer(3,
+	  FWidgetActiveTimerDelegate::CreateLambda([ = ](double InCurrentTime, float InDeltaTime)
+		{
+		InPanel->ScrollDescendantIntoView(LastTextWidget);
+		GEngine->AddOnScreenDebugMessage(-1,5,FColor::Yellow,TEXT("RegisterActiveTimer"))	  ;
+		return EActiveTimerReturnType::Stop;
+		}
+	)
+	);
+}
 
