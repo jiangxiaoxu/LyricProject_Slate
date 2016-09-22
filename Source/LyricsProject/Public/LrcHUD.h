@@ -20,11 +20,9 @@ class LYRICSPROJECT_API ALrcHUD : public AHUD
 public:
 	ALrcHUD();
 
-	TSharedPtr<class SWidget>	 MyWidget;
+	TSharedPtr<class SWidget> MyWidget;
 
-	virtual void PostInitializeComponents()override;
 	virtual void BeginPlay()override;
-	virtual void Tick( float DeltaSeconds )override;
 	
 	UPROPERTY(VisibleAnywhere, Category = "Audio")
 	UAudioComponent*  AudioComp;
@@ -40,6 +38,4 @@ public:
 	void PlaySound();
 
 	float GetPlayedSeconds()const;
-
-	FText GetLyricText()const;
 };

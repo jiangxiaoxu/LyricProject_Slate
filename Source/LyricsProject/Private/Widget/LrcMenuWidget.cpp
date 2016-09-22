@@ -89,11 +89,11 @@ void SLrcMenuWidget::BuildLyricLine()
 			   SAssignNew(OneLineWidget,STextBlock)
 			   .Text(FText::FromString(OneLine.StringBody))
 			   .Font(FSlateFontInfo("Arial", 50))
-			   .ColorAndOpacity_Lambda([this, TimeRange ]{   return  PlayedSeconds.Get()>= TimeRange.X&&PlayedSeconds.Get() <= TimeRange.Y?FLinearColor(1,1,1,1):FLinearColor(1,1,1,0.5);})
+			   .ColorAndOpacity_Lambda([ this, TimeRange ] {return  PlayedSeconds.Get() >= TimeRange.X&&PlayedSeconds.Get() <= TimeRange.Y ? FLinearColor(1, 1, 1, 1) : FLinearColor(1, 1, 1, 0.5); })
 		   ];
 	  Lines.Add(OneLineWidget.ToSharedRef()) ;
    }
 
-	 RegisterActiveTimer(0,  FWidgetActiveTimerDelegate::CreateSP(this,&SLrcMenuWidget::UpdateScrollTo));
+   RegisterActiveTimer(0, FWidgetActiveTimerDelegate::CreateSP(this, &SLrcMenuWidget::UpdateScrollTo));
 }
 

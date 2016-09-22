@@ -13,21 +13,20 @@ ALrcHUD::ALrcHUD()
 	AudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("MyAudioComponent"));
 	AudioComp->bAutoActivate = false;
 
-	//ConstructorHelpers::FObjectFinder<USoundCue> MyTestSound (TEXT("SoundWave'/Game/青空のナミダ.青空のナミダ'")) ;
+	ConstructorHelpers::FObjectFinder<USoundBase> MySound(TEXT("SoundWave'/Game/青空のナミダ.青空のナミダ'"));
+	ConstructorHelpers::FObjectFinder<ULyricAsset>	 MyLrcAsset(TEXT("LyricAsset'/Game/高桥瞳_-_青空のナミダ.高桥瞳_-_青空のナミダ'"));
 
-	//if (MyTestSound.Succeeded())
-	//{
-	//	AudioComp->SetSound(MyTestSound.Object)   ;
-	//}
+	if (MySound.Succeeded())
+	{
+		AudioComp->SetSound(MySound.Object);
+	}
 
+	if (MyLrcAsset.Succeeded())
+	{
+		LyricAsset = MyLrcAsset.Object;
+	}
 }
 
-void ALrcHUD::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-
-
-}
 
 void ALrcHUD::BeginPlay()
 {
@@ -44,13 +43,12 @@ void ALrcHUD::BeginPlay()
 		));
 	}
 
+	FTimerHandle  TheHandle;
+
+	GetWorldTimerManager().SetTimer(TheHandle, this, &ALrcHUD::PlaySound, 2);
 }
 
-void ALrcHUD::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
 
-}
 
 void ALrcHUD::PlaySound()
 {
@@ -78,14 +76,3 @@ float ALrcHUD::GetPlayedSeconds() const
 	}
 }
 
-FText ALrcHUD::GetLyricText() const
-{
-	if (!LyricAsset)
-	{
-		return FText::GetEmpty();
-	}
-
-	int32  Index= LyricAsset->LineArray.FindLastByPredicate([ this ](const FLyricLine&  TestLine) {return TestLine.StartTime <= GetPlayedSeconds(); });
-
-	return	  LyricAsset->LineArray.IsValidIndex(Index) ? FText::FromString(LyricAsset->LineArray[Index].StringBody) : FText::GetEmpty();
-}
