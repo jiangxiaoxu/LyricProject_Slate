@@ -38,4 +38,8 @@ public:
 	void PlaySound();
 
 	float GetPlayedSeconds()const;
+
+	class USoundWave*  ImportMusicByFilePath(const FString& FileName);
+
+	class ULyricAsset* 	ImportLyricByFilePath(const FString& FileName);
 };

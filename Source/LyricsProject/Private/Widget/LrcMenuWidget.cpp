@@ -74,26 +74,31 @@ EActiveTimerReturnType SLrcMenuWidget::UpdateScrollTo(double InCurrentTime, floa
 
 void SLrcMenuWidget::BuildLyricLine()
 {
-   check(ContainBox.IsValid()&& OwnerHUD&&OwnerHUD->LyricAsset);
-
-   for (const FLyricLine& OneLine : OwnerHUD->LyricAsset->LineArray)
+   if (ensure(ContainBox.IsValid()) && OwnerHUD&&OwnerHUD->LyricAsset)
    {
-    TSharedPtr<STextBlock>	 OneLineWidget;
+	   for (const FLyricLine& OneLine : OwnerHUD->LyricAsset->LineArray)
+	   {
+		   TSharedPtr<STextBlock>	 OneLineWidget;
 
-	FVector2D TimeRange(OneLine.StartTime, OneLine.EndTime);
+		   FVector2D TimeRange(OneLine.StartTime, OneLine.EndTime);
 
-	   ContainBox->AddSlot()
-		   .HAlign(HAlign_Center)
-		   .VAlign(VAlign_Center)
-		   [
-			   SAssignNew(OneLineWidget,STextBlock)
-			   .Text(FText::FromString(OneLine.StringBody))
+		   ContainBox->AddSlot()
+			   .HAlign(HAlign_Center)
+			   .VAlign(VAlign_Center)
+			   [
+				   SAssignNew(OneLineWidget, STextBlock)
+				   .Text(FText::FromString(OneLine.StringBody))
 			   .Font(FSlateFontInfo("Arial", 50))
 			   .ColorAndOpacity_Lambda([ this, TimeRange ] {return  PlayedSeconds.Get() >= TimeRange.X&&PlayedSeconds.Get() <= TimeRange.Y ? FLinearColor(1, 1, 1, 1) : FLinearColor(1, 1, 1, 0.5); })
-		   ];
-	  Lines.Add(OneLineWidget.ToSharedRef()) ;
-   }
+			   ];
+		   Lines.Add(OneLineWidget.ToSharedRef());
+	   }
 
-   RegisterActiveTimer(0, FWidgetActiveTimerDelegate::CreateSP(this, &SLrcMenuWidget::UpdateScrollTo));
+	   RegisterActiveTimer(0, FWidgetActiveTimerDelegate::CreateSP(this, &SLrcMenuWidget::UpdateScrollTo));
+   }
+   else
+   {
+	   UE_LOG(LogTemp, Warning, TEXT("Need valid OwnerHUD and LyricAsset "));
+   }
 }
 
