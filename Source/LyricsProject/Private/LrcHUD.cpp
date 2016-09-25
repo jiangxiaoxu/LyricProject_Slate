@@ -16,18 +16,6 @@ ALrcHUD::ALrcHUD()
 	AudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("MyAudioComponent"));
 	AudioComp->bAutoActivate = false;
 
-	//ConstructorHelpers::FObjectFinder<USoundBase> MySound(TEXT("SoundWave'/Game/青空のナミダ.青空のナミダ'"));
-	//ConstructorHelpers::FObjectFinder<ULyricAsset>	 MyLrcAsset(TEXT("LyricAsset'/Game/高桥瞳_-_青空のナミダ.高桥瞳_-_青空のナミダ'"));
-
-	/*if (MySound.Succeeded())
-	{
-		AudioComp->SetSound(MySound.Object);
-	}
-
-	if (MyLrcAsset.Succeeded())
-	{
-		LyricAsset = MyLrcAsset.Object;
-	}*/
 }
 
 
@@ -47,11 +35,16 @@ void ALrcHUD::BeginPlay()
 
 	if (GEngine&&GEngine->GameViewport)
 	{
-		GEngine->GameViewport->AddViewportWidgetContent(SNew(SWeakWidget).PossiblyNullContent(
+		GEngine->GameViewport->AddViewportWidgetContent(
+		SNew(SOverlay)
+		+SOverlay::Slot()
+		.HAlign(HAlign_Fill)
+		.VAlign(VAlign_Fill)
+		[
 			SAssignNew(MyWidget, SLrcMenuWidget)
 			.OwnerHUD(this)
 			.PlayedSeconds_UObject(this,&ALrcHUD::GetPlayedSeconds)
-		));
+		]);
 	}
 
 	FTimerHandle  TheHandle;

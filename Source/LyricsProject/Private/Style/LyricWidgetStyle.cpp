@@ -5,15 +5,14 @@
 
 void FLyricWidgetStyle::GetResources(TArray<const FSlateBrush*>& OutBrushes) const
 {
-
+	OutBrushes.Add(&BackgroundBrush);
 }
 
 const FName FLyricWidgetStyle::TypeName = TEXT("FGlobalStyle");
 
 const FName FLyricWidgetStyle::GetTypeName() const
 {
-	static const FName TheTypeName = TEXT("FGlobalStyle");
-	return TheTypeName;
+	return TypeName;
 }
 
 const FLyricWidgetStyle& FLyricWidgetStyle::GetDefault()

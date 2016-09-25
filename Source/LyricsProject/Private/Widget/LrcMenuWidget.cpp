@@ -5,48 +5,57 @@
 #include "LrcHUD.h"
 #include "LyricProjectWidgetStyles.h"
 #include "LyricWidgetStyle.h"
+#include "SScaleBox.h"
 
 void SLrcMenuWidget::Construct(const FArguments& InArgs)
 {
-	//bCanTick = false;
-
 	OwnerHUD = InArgs._OwnerHUD;
 	PlayedSeconds=InArgs._PlayedSeconds;
-	auto TheStyle = &FLyricProjectWidgetStyles::Get().GetWidgetStyle<FLyricWidgetStyle>("Style1");
+	MyStyle = &FLyricProjectWidgetStyles::Get().GetWidgetStyle<FLyricWidgetStyle>("Style1");
 
 	ChildSlot
-		[						
-		  SNew(SOverlay)
-		  +SOverlay::Slot()
-			.HAlign(HAlign_Center)
-			.VAlign(VAlign_Top)
+	[
+		SNew(SScaleBox)
+		.Stretch(EStretch::ScaleToFit)
+		.HAlign(HAlign_Center)
+		.VAlign(VAlign_Center)
+		[
+			SNew(SBox)
+			.WidthOverride(MyStyle->BackgroundBrush.ImageSize.X)
+			.HeightOverride(MyStyle->BackgroundBrush.ImageSize.Y)
 			[
-				SNew(STextBlock)
-				.ColorAndOpacity(FLinearColor::White)
-				.ShadowColorAndOpacity(FLinearColor::Black)
-				.ShadowOffset(FIntPoint(-1,1))
-				.Font(FSlateFontInfo("Arial", 60))
-				.Text_Lambda([ this ] { 
-					float CachedSeconds = PlayedSeconds.Get();
-					int32 Min = FMath::TruncToInt(CachedSeconds / 60);
-					int32 Second = FMath::TruncToInt(CachedSeconds) % 60;
-					int32 MillSecond = FMath::TruncToInt((CachedSeconds - FMath::TruncToInt(CachedSeconds)) * 100);
-					return FText::FromString(FString::Printf(TEXT("[%02i:%02i.%02i]"), Min, Second, MillSecond)); })
-			]
-			+SOverlay::Slot()
-			.HAlign(HAlign_Center)
-			.VAlign(VAlign_Center)
+				SNew(SBorder)
+				.BorderImage(&MyStyle->BackgroundBrush)
+				.BorderBackgroundColor(FLinearColor(1, 1, 1, 0.5f))
 				[
-				   SNew(SBox)
-				   .HeightOverride(650)
+					SNew(SVerticalBox)
+					+ SVerticalBox::Slot()
+					.HAlign(HAlign_Center)
+				    .AutoHeight()
+					.Padding(FMargin(10, 30))
+					[
+						SNew(STextBlock)
+						.ColorAndOpacity(FLinearColor::White)
+						.ShadowColorAndOpacity(FLinearColor::Black)
+						.ShadowOffset(FIntPoint(-1, 1))
+						.Font(FSlateFontInfo("Arial", 60))
+						.Text_Lambda([ this ] {
+						float CachedSeconds = PlayedSeconds.Get();
+						int32 Min = FMath::TruncToInt(CachedSeconds / 60);
+						int32 Second = FMath::TruncToInt(CachedSeconds) % 60;
+						int32 MillSecond = FMath::TruncToInt((CachedSeconds - FMath::TruncToInt(CachedSeconds)) * 100);
+						return FText::FromString(FString::Printf(TEXT("[%02i:%02i.%02i]"), Min, Second, MillSecond)); })
+					]
+				   + SVerticalBox::Slot()
 					[
 						SAssignNew(ContainBox, SScrollBox)
-				    ]
+					]
 				]
-		];
+			]
+		]
+	];
 
 	BuildLyricLine();
-
 }
 
 EActiveTimerReturnType SLrcMenuWidget::UpdateScrollTo(double InCurrentTime, float InDeltaTime)
@@ -88,8 +97,9 @@ void SLrcMenuWidget::BuildLyricLine()
 			   [
 				   SAssignNew(OneLineWidget, STextBlock)
 				   .Text(FText::FromString(OneLine.StringBody))
-			   .Font(FSlateFontInfo("Arial", 50))
-			   .ColorAndOpacity_Lambda([ this, TimeRange ] {return  PlayedSeconds.Get() >= TimeRange.X&&PlayedSeconds.Get() <= TimeRange.Y ? FLinearColor(1, 1, 1, 1) : FLinearColor(1, 1, 1, 0.5); })
+				   .Font(FSlateFontInfo("Microsoft YaHei UI Light", 40))
+		//		   .Font(MyStyle->FontInfo)
+				   .ColorAndOpacity_Lambda([ this, TimeRange ] {return  PlayedSeconds.Get() >= TimeRange.X&&PlayedSeconds.Get() <= TimeRange.Y ? FLinearColor(1, 1, 1, 1) : FLinearColor(1, 1, 1, 0.5); })
 			   ];
 		   Lines.Add(OneLineWidget.ToSharedRef());
 	   }

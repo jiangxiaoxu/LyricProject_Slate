@@ -24,6 +24,7 @@ public:
 	
 
 private:
+	const struct FLyricWidgetStyle* MyStyle;
 
 	void	BuildLyricLine();
 
