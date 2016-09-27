@@ -25,7 +25,7 @@ public:
 	virtual void BeginPlay()override;
 	
 	UPROPERTY(VisibleAnywhere, Category = "Audio")
-	UAudioComponent*  AudioComp;
+	class	ULSoundPlayerComp*  AudioComp;
 
 	float StartTime = -1;
 

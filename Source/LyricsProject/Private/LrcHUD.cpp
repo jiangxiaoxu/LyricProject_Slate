@@ -7,13 +7,15 @@
 #include "LrcMenuWidget.h"
 #include "VorbisAudioInfo.h"
 #include "Developer/TargetPlatform/Public/Interfaces/IAudioFormat.h"
+#include "LSoundPlayerComp.h"
 
+#include "MAD_Widget.h"
 
 
 
 ALrcHUD::ALrcHUD()
 {
-	AudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("MyAudioComponent"));
+	AudioComp = CreateDefaultSubobject<ULSoundPlayerComp>(TEXT("MyAudioComponent"));
 	AudioComp->bAutoActivate = false;
 
 }
@@ -41,9 +43,9 @@ void ALrcHUD::BeginPlay()
 		.HAlign(HAlign_Fill)
 		.VAlign(VAlign_Fill)
 		[
-			SAssignNew(MyWidget, SLrcMenuWidget)
+			SAssignNew(MyWidget, SMAD_Widget)
 			.OwnerHUD(this)
-			.PlayedSeconds_UObject(this,&ALrcHUD::GetPlayedSeconds)
+	//		.PlayedSeconds_UObject(this,&ALrcHUD::GetPlayedSeconds)
 		]);
 	}
 
@@ -61,10 +63,9 @@ void ALrcHUD::PlaySound()
 	if (AudioComp&&AudioComp->Sound)
 	{
 		SoundDuration = AudioComp->Sound->Duration;
-		StartTime = GetWorld()->GetTimeSeconds();
+		StartTime = GetWorld()->GetAudioTimeSeconds();
 
 		AudioComp->Play();
-
 	}
 }
 
@@ -72,7 +73,7 @@ float ALrcHUD::GetPlayedSeconds() const
 {
 	if (StartTime > 0 && ensure(SoundDuration > 0))
 	{
-		return  FMath::Min(GetWorld()->GetTimeSeconds() - StartTime, SoundDuration);
+		return  FMath::Min(GetWorld()->GetAudioTimeSeconds() - StartTime, SoundDuration);
 	}
 	else
 	{
