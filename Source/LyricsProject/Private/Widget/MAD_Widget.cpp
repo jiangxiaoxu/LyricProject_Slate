@@ -11,8 +11,8 @@ void SMAD_Widget::Construct(const FArguments& InArgs)
 {
 	OwnerHUD = InArgs._OwnerHUD;
 	MyStyle = &FLyricProjectWidgetStyles::Get().GetWidgetStyle<FLyricWidgetStyle>("Style1");
-
-	const FTextBlockStyle  *const usedtextBlockStyle=&FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>("LyricStyleAsset")  ;
+						  
+	UsedtextBlockStyle=&FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>("LyricStyleAsset")  ;
 
 	ChildSlot
 		  [
@@ -36,18 +36,31 @@ void SMAD_Widget::Construct(const FArguments& InArgs)
 				  .Padding(FMargin(0 ,0,0,50))
 				  [
 					SNew(STextBlock)
-				//	.ColorAndOpacity(FLinearColor::White)
-				//	.ShadowColorAndOpacity(FLinearColor::Black)
-				//	.ShadowOffset(FIntPoint(-1, 1))
-					.TextStyle(usedtextBlockStyle)
+					.TextStyle(UsedtextBlockStyle)
 					.Font(FSlateFontInfo("Microsoft YaHei UI Light", 20))
 					.Text_Raw(this,&SMAD_Widget::GetLyricText)
+				  ]
+				  +SOverlay::Slot()
+				  .HAlign(HAlign_Center)
+				  .VAlign(VAlign_Top)
+				  .Padding(FMargin(0,50,0,0))
+				  [
+					SNew(STextBlock)
+					.ShadowOffset(UsedtextBlockStyle->ShadowOffset)
+					.ColorAndOpacity_Raw(this,&SMAD_Widget::GetTitleColor)
+					.Font(FSlateFontInfo("Microsoft YaHei UI Light", 40))
+					.Text(InArgs._TitleText)
 				  ]
 				]
 			  ]
 			]
 		];
+	SetupAnimation();
+}
 
+void SMAD_Widget::PlayStartAnimation()
+{
+	BeginPlayAnimation.Play(this->AsShared());
 }
 
 FText SMAD_Widget::GetLyricText() const
@@ -61,4 +74,32 @@ FText SMAD_Widget::GetLyricText() const
 		}
 	}
 	return FText::FromString("No Lyric");
+}
+
+void SMAD_Widget::SetupAnimation()
+{
+	TitleColorCurve= BeginPlayAnimation.AddCurve(0,5,ECurveEaseFunction::CubicInOut)	;
+}
+
+FSlateColor SMAD_Widget::GetTitleColor() const
+{
+	const float LerpValue = TitleColorCurve.GetLerp();
+	FLinearColor UsedColor = UsedtextBlockStyle->ColorAndOpacity.GetSpecifiedColor();
+	FLinearColor AlphaColor(UsedColor.R, UsedColor.G, UsedColor.B, 0);
+
+	float FadeIn=0.1f;
+
+	float FadeOut=0.9f;
+
+	if (LerpValue <FadeIn)
+	{
+		return FMath::Lerp(AlphaColor, UsedColor, LerpValue/ FadeIn);
+	}
+
+	if (LerpValue < FadeOut)
+	{
+		return	  UsedtextBlockStyle->ColorAndOpacity;
+	}
+
+	return FMath::Lerp(UsedColor, AlphaColor,(LerpValue- FadeOut)/(1-FadeOut));
 }

@@ -243,3 +243,7 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/Binaries/Win64
+/Intermediate
+/Saved
+/LyricsProject.sln

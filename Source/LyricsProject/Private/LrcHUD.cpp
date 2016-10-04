@@ -45,7 +45,7 @@ void ALrcHUD::BeginPlay()
 		[
 			SAssignNew(MyWidget, SMAD_Widget)
 			.OwnerHUD(this)
-	//		.PlayedSeconds_UObject(this,&ALrcHUD::GetPlayedSeconds)
+			.TitleText(FText::FromString(TEXT("GARNiDELiA - 極楽浄土")))
 		]);
 	}
 
@@ -66,6 +66,8 @@ void ALrcHUD::PlaySound()
 		StartTime = GetWorld()->GetAudioTimeSeconds();
 
 		AudioComp->Play();
+
+		StaticCastSharedRef<SMAD_Widget>(MyWidget.ToSharedRef())->PlayStartAnimation();
 	}
 }
 
