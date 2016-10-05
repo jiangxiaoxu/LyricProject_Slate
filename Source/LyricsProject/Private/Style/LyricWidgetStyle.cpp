@@ -5,7 +5,6 @@
 
 void FLyricWidgetStyle::GetResources(TArray<const FSlateBrush*>& OutBrushes) const
 {
-	OutBrushes.Add(&BackgroundBrush);
 }
 
 const FName FLyricWidgetStyle::TypeName = TEXT("FGlobalStyle");

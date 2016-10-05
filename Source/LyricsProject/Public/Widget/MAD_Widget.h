@@ -13,6 +13,7 @@ class LYRICSPROJECT_API SMAD_Widget :public SCompoundWidget
 
 	SLATE_ARGUMENT(TAutoWeakObjectPtr<class ALrcHUD>, OwnerHUD)
 
+
 	SLATE_ATTRIBUTE(FText,TitleText)
 
 	SLATE_END_ARGS()
@@ -21,9 +22,13 @@ public:
 
 	void PlayStartAnimation();
 private:
-	
+
 	const struct FTextBlockStyle* UsedtextBlockStyle;
 	const struct FLyricWidgetStyle* MyStyle;
+
+	FSlateBrush DynamicBrush;
+
+	TAutoWeakObjectPtr<UMaterialInstanceDynamic>	   DynamicMaterial;
 
 	TAutoWeakObjectPtr<class ALrcHUD> OwnerHUD;
 
@@ -34,8 +39,18 @@ private:
 	/*控制开始播放时的动画*/
 	FCurveSequence BeginPlayAnimation;
 
-	FCurveHandle TitleColorCurve;
+	FCurveHandle PanelTransformCurve;
 
- 	FSlateColor GetTitleColor()const;
+	FCurveHandle TimeTransformCurve;
+
+	FCurveHandle TitleTransformCurve;
+
+
+	TOptional<FSlateRenderTransform> GetPanelTransform() const;
+
+	TOptional<FSlateRenderTransform> GetTimeTransform() const;
+
+	TOptional<FSlateRenderTransform> GetTitleTransform() const;
+
 
 };

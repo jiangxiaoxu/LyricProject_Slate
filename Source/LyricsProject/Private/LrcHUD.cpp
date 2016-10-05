@@ -10,7 +10,7 @@
 #include "LSoundPlayerComp.h"
 
 #include "MAD_Widget.h"
-
+#include "Kismet/KismetMaterialLibrary.h"
 
 
 ALrcHUD::ALrcHUD()
@@ -19,6 +19,8 @@ ALrcHUD::ALrcHUD()
 	AudioComp->bAutoActivate = false;
 
 }
+
+
 
 
 void ALrcHUD::BeginPlay()
@@ -35,18 +37,13 @@ void ALrcHUD::BeginPlay()
 
 	GetOwningPlayerController()->bShowMouseCursor = true;
 
+	SAssignNew(MyWidget, SMAD_Widget)
+		.OwnerHUD(this)
+		.TitleText(FText::FromString(TEXT("GARNiDELiA - 極楽浄土")));
+
 	if (GEngine&&GEngine->GameViewport)
 	{
-		GEngine->GameViewport->AddViewportWidgetContent(
-		SNew(SOverlay)
-		+SOverlay::Slot()
-		.HAlign(HAlign_Fill)
-		.VAlign(VAlign_Fill)
-		[
-			SAssignNew(MyWidget, SMAD_Widget)
-			.OwnerHUD(this)
-			.TitleText(FText::FromString(TEXT("GARNiDELiA - 極楽浄土")))
-		]);
+		GEngine->GameViewport->AddViewportWidgetContent(SNew(SWeakWidget).PossiblyNullContent(MyWidget.ToSharedRef()));
 	}
 
 	FTimerHandle  TheHandle;

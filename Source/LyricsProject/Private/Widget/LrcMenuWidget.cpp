@@ -21,11 +21,11 @@ void SLrcMenuWidget::Construct(const FArguments& InArgs)
 		.VAlign(VAlign_Center)
 		[
 			SNew(SBox)
-			.WidthOverride(MyStyle->BackgroundBrush.ImageSize.X)
-			.HeightOverride(MyStyle->BackgroundBrush.ImageSize.Y)
+		//	.WidthOverride(MyStyle->BackgroundBrush.ImageSize.X)
+		//	.HeightOverride(MyStyle->BackgroundBrush.ImageSize.Y)
 			[
 				SNew(SBorder)
-				.BorderImage(&MyStyle->BackgroundBrush)
+			//	.BorderImage(&MyStyle->BackgroundBrush)
 				.BorderBackgroundColor(FLinearColor(1, 1, 1, 0.5f))
 				[
 					SNew(SVerticalBox)
