@@ -22,6 +22,8 @@ public:
 
 	void PlayStartAnimation();
 private:
+	TAttribute<FText> TitleText;
+	FVector2D TitleTextSize;
 
 	const struct FTextBlockStyle* UsedtextBlockStyle;
 	const struct FLyricWidgetStyle* MyStyle;
@@ -46,7 +48,7 @@ private:
 	FCurveHandle TitleTransformCurve;
 
 
-	TOptional<FSlateRenderTransform> GetPanelTransform() const;
+	TOptional<FSlateRenderTransform> GetPanelImageTransform() const;
 
 	TOptional<FSlateRenderTransform> GetTimeTransform() const;
 

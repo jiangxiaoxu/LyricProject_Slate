@@ -12,6 +12,10 @@
 void SMAD_Widget::Construct(const FArguments& InArgs)
 {
 	OwnerHUD = InArgs._OwnerHUD;
+	TitleText=InArgs._TitleText;
+
+	TSharedRef<FSlateFontMeasure> FontMeasure = FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
+	TitleTextSize = FontMeasure->Measure(TitleText.Get(), FSlateFontInfo("Microsoft YaHei UI Light", 30));
 
 	MyStyle = &FLyricProjectWidgetStyles::Get().GetWidgetStyle<FLyricWidgetStyle>("Style1");
 //	UsedtextBlockStyle = &FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>("LyricStyleAsset");
@@ -53,7 +57,7 @@ void SMAD_Widget::Construct(const FArguments& InArgs)
 				
 				SNew(SBox)
 				.HeightOverride(258)
-				.RenderTransform_Raw(this,&SMAD_Widget::GetPanelTransform)
+				
 				.RenderTransformPivot(FVector2D(0,0.5f))
 				[
 					SNew(SConstraintCanvas)
@@ -62,6 +66,7 @@ void SMAD_Widget::Construct(const FArguments& InArgs)
 					[
 					   SNew(SImage)
 					   .ColorAndOpacity(FSlateColor(FLinearColor(0,0,0,0.5f)) )
+						.RenderTransform_Raw(this, &SMAD_Widget::GetPanelImageTransform)
 					]
 					+SConstraintCanvas::Slot()
 					.Anchors(FAnchors(1, 0, 1,0))
@@ -142,9 +147,9 @@ FText SMAD_Widget::GetLyricText() const
 
 void SMAD_Widget::SetupAnimation()
 {
-	PanelTransformCurve=BeginPlayAnimation.AddCurve(2,1,ECurveEaseFunction::CubicOut);
+	PanelTransformCurve = BeginPlayAnimation.AddCurve(2, 1, ECurveEaseFunction::CubicOut);
 
-	TimeTransformCurve= BeginPlayAnimation.AddCurve(3.5, 1, ECurveEaseFunction::CubicOut);
+	TimeTransformCurve = BeginPlayAnimation.AddCurve(3.5, 1, ECurveEaseFunction::CubicOut);
 
 	TitleTransformCurve = BeginPlayAnimation.AddCurve(5, 1, ECurveEaseFunction::CubicOut);
 }
@@ -153,23 +158,25 @@ void SMAD_Widget::SetupAnimation()
 
 
 
-TOptional<FSlateRenderTransform> SMAD_Widget::GetPanelTransform() const
+TOptional<FSlateRenderTransform> SMAD_Widget::GetPanelImageTransform() const
 {
-	FSlateRenderTransform  TheTransform(FScale2D(PanelTransformCurve.GetLerp(), 1));
+
+	FSlateRenderTransform  TheTransform(FMath::Lerp(FVector2D(-2500, 0), FVector2D::ZeroVector, PanelTransformCurve.GetLerp()));
 
 	return TheTransform;
 }
 
 TOptional<FSlateRenderTransform> SMAD_Widget::GetTitleTransform() const
 {
-	FSlateRenderTransform  TheTransform(FScale2D(TitleTransformCurve.GetLerp(), 1));
+
+	FSlateRenderTransform  TheTransform(FMath::Lerp(FVector2D(100+TitleTextSize.X, 0), FVector2D::ZeroVector, TitleTransformCurve.GetLerp()));
 
 	return TheTransform;
 }
 
 TOptional<FSlateRenderTransform> SMAD_Widget::GetTimeTransform() const
 {
-	FSlateRenderTransform  TheTransform(FScale2D(TimeTransformCurve.GetLerp(), 1));
+	FSlateRenderTransform  TheTransform(FMath::Lerp(FVector2D(400, 0), FVector2D::ZeroVector, TimeTransformCurve.GetLerp()));
 
 	return TheTransform;
 }
