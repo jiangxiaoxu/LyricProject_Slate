@@ -80,6 +80,16 @@ float ALrcHUD::GetPlayedSeconds() const
 	}
 }
 
+float ALrcHUD::GetPlayedProgress() const
+{
+	if (SoundDuration==0)
+	{
+		return 0;
+	}
+
+	return GetPlayedSeconds()/ SoundDuration;
+}
+
 class USoundWave* ALrcHUD::ImportMusicByFilePath(const FString& Filename)
 {
 	TArray<uint8>  RawFile;

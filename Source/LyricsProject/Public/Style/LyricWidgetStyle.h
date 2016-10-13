@@ -37,6 +37,9 @@ public:
 	UMaterialInterface* BackGroundMat;
 
 	UPROPERTY(EditDefaultsOnly, Category = Appearance)
+	UMaterialInterface* ProgressMat;
+
+	UPROPERTY(EditDefaultsOnly, Category = Appearance)
 	TEnumAsByte<EStretch::Type>	   BackGroundStretchType;
 
 	UPROPERTY(EditDefaultsOnly, Category = Appearance)

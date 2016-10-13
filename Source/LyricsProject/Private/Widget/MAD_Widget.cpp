@@ -20,16 +20,26 @@ void SMAD_Widget::Construct(const FArguments& InArgs)
 	MyStyle = &FLyricProjectWidgetStyles::Get().GetWidgetStyle<FLyricWidgetStyle>("Style1");
 //	UsedtextBlockStyle = &FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>("LyricStyleAsset");
 
-	DynamicMaterial=UKismetMaterialLibrary::CreateDynamicMaterialInstance(OwnerHUD.Get(),MyStyle->BackGroundMat) ;
-	check(DynamicMaterial.IsValid());
+	{
+		BackgroundDynamicMI = UKismetMaterialLibrary::CreateDynamicMaterialInstance(OwnerHUD.Get(), MyStyle->BackGroundMat);
+		check(BackgroundDynamicMI.IsValid());
 
-	UTexture* UsedTexture = nullptr;
-	check(DynamicMaterial->GetTextureParameterValue("UsedTexture", UsedTexture));
+		UTexture* UsedTexture = nullptr;
+		check(BackgroundDynamicMI->GetTextureParameterValue("UsedTexture", UsedTexture));
 
-	DynamicBrush.ImageSize=FVector2D(UsedTexture->GetSurfaceWidth(),UsedTexture->GetSurfaceHeight()) ;
-	DynamicBrush.ImageType= ESlateBrushImageType::FullColor;
-	DynamicBrush.SetResourceObject(DynamicMaterial.Get());
+		BackGroundBrush.ImageSize = FVector2D(UsedTexture->GetSurfaceWidth(), UsedTexture->GetSurfaceHeight());
+		BackGroundBrush.ImageType = ESlateBrushImageType::FullColor;
+		BackGroundBrush.SetResourceObject(BackgroundDynamicMI.Get());
+	}
 
+	{
+		ProgressDynamicMI = UKismetMaterialLibrary::CreateDynamicMaterialInstance(OwnerHUD.Get(), MyStyle->ProgressMat);
+		check(ProgressDynamicMI.IsValid());
+
+		ProgressBrush.ImageSize = FVector2D(200, 200);
+		ProgressBrush.ImageType = ESlateBrushImageType::FullColor;
+		ProgressBrush.SetResourceObject(ProgressDynamicMI.Get());
+	}
 
 	ChildSlot
 		  [
@@ -45,7 +55,7 @@ void SMAD_Widget::Construct(const FArguments& InArgs)
 				.HAlign(HAlign_Center)
 				[
 					SNew(SImage)
-					.Image(&DynamicBrush)
+					.Image(&BackGroundBrush)
 					.ColorAndOpacity(FLinearColor(1, 1, 1, 0.5f))
 				]
 			]
@@ -57,7 +67,6 @@ void SMAD_Widget::Construct(const FArguments& InArgs)
 				
 				SNew(SBox)
 				.HeightOverride(258)
-				
 				.RenderTransformPivot(FVector2D(0,0.5f))
 				[
 					SNew(SConstraintCanvas)
@@ -67,6 +76,16 @@ void SMAD_Widget::Construct(const FArguments& InArgs)
 					   SNew(SImage)
 					   .ColorAndOpacity(FSlateColor(FLinearColor(0,0,0,0.5f)) )
 						.RenderTransform_Raw(this, &SMAD_Widget::GetPanelImageTransform)
+					]
+					+SConstraintCanvas::Slot()
+					.Alignment(FVector2D(0,0.5f))
+					.Anchors(FAnchors(0, 0.5, 0, 0.5))
+					.AutoSize(true)
+					.Offset(FMargin(50, 0, 0, 0))
+					[
+						SNew(SImage)
+						.Image(&ProgressBrush)
+						.RenderTransform_Raw(this, &SMAD_Widget::GetProgressImageTransform)
 					]
 					+SConstraintCanvas::Slot()
 					.Anchors(FAnchors(1, 0, 1,0))
@@ -104,9 +123,9 @@ void SMAD_Widget::Construct(const FArguments& InArgs)
 						.Text(InArgs._TitleText)
 					]
 					+SConstraintCanvas::Slot()
-					.Anchors(FAnchors(0, 0.5f, 1, 0.5f))
-					.Alignment(FVector2D(0, 0))
-					.Offset(FMargin(100, 0, 0, 0))
+					.Anchors(FAnchors(0.3f, 0.5f, 0.3f, 0.5f))
+					.Alignment(FVector2D(0, 0.5f))
+					//.Offset(FMargin(100, 0, 0, 0))
 					.AutoSize(true)
 					[
 						SNew(STextBlock)
@@ -115,6 +134,7 @@ void SMAD_Widget::Construct(const FArguments& InArgs)
 						.ShadowOffset(FIntPoint(-1, 1))
 						.Font(FSlateFontInfo("Microsoft YaHei UI Light", 30))
 						.Text_Raw(this, &SMAD_Widget::GetLyricText)
+						.Visibility_Raw(this,&SMAD_Widget::GetLyricTextVisibility)
 					]
 				]
 			]  
@@ -148,10 +168,11 @@ FText SMAD_Widget::GetLyricText() const
 void SMAD_Widget::SetupAnimation()
 {
 	PanelTransformCurve = BeginPlayAnimation.AddCurve(2, 1, ECurveEaseFunction::CubicOut);
+	TimeTransformCurve = BeginPlayAnimation.AddCurve(3.5, 0.5, ECurveEaseFunction::CubicOut);
+	TitleTransformCurve = BeginPlayAnimation.AddCurve(3.5, 0.5, ECurveEaseFunction::CubicOut);
+	ProgressImageTransformCurve = BeginPlayAnimation.AddCurve(2.5, 0.5, ECurveEaseFunction::QuadInOut);
 
-	TimeTransformCurve = BeginPlayAnimation.AddCurve(3.5, 1, ECurveEaseFunction::CubicOut);
-
-	TitleTransformCurve = BeginPlayAnimation.AddCurve(5, 1, ECurveEaseFunction::CubicOut);
+	RegisterActiveTimer(0, FWidgetActiveTimerDelegate::CreateSP(this, &SMAD_Widget::UpdateProgressImage));
 }
 
 
@@ -172,6 +193,40 @@ TOptional<FSlateRenderTransform> SMAD_Widget::GetTitleTransform() const
 	FSlateRenderTransform  TheTransform(FMath::Lerp(FVector2D(100+TitleTextSize.X, 0), FVector2D::ZeroVector, TitleTransformCurve.GetLerp()));
 
 	return TheTransform;
+}
+
+TOptional<FSlateRenderTransform> SMAD_Widget::GetProgressImageTransform() const
+{
+	float Lerp = ProgressImageTransformCurve.GetLerp();
+
+	if (FMath::IsNearlyEqual(Lerp, 0))	  //初始未开始播放时,设置成0以方便隐藏
+	{
+		return	 FSlateRenderTransform(FScale2D(0));
+	}
+
+	float Scale = FMath::Lerp<float>(0.8f, 1.0f, FMath::Abs(Lerp-0.5f)/0.5f);
+
+	return	  FSlateRenderTransform(FScale2D(Scale));
+}
+
+EVisibility SMAD_Widget::GetLyricTextVisibility() const
+{
+	return TimeTransformCurve.GetLerp()>0.95f ? EVisibility::Visible : EVisibility::Hidden;
+}
+
+EActiveTimerReturnType SMAD_Widget::UpdateProgressImage(double InCurrentTime, float InDeltaTime)
+{
+	if (ProgressDynamicMI.IsValid()&&OwnerHUD.IsValid())
+	{
+
+		ProgressDynamicMI->SetScalarParameterValue(TEXT("Alpha"), OwnerHUD->GetPlayedProgress())   ;
+
+		return EActiveTimerReturnType::Continue;
+	}
+	else
+	{
+		return EActiveTimerReturnType::Stop;
+	}
 }
 
 TOptional<FSlateRenderTransform> SMAD_Widget::GetTimeTransform() const

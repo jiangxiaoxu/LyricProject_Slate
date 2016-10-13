@@ -25,13 +25,14 @@ private:
 	TAttribute<FText> TitleText;
 	FVector2D TitleTextSize;
 
-	const struct FTextBlockStyle* UsedtextBlockStyle;
-	const struct FLyricWidgetStyle* MyStyle;
+	const struct FTextBlockStyle* UsedtextBlockStyle=nullptr;
+	const struct FLyricWidgetStyle* MyStyle=nullptr;
 
-	FSlateBrush DynamicBrush;
+	FSlateBrush BackGroundBrush;
+	FSlateBrush	 ProgressBrush;
 
-	TAutoWeakObjectPtr<UMaterialInstanceDynamic>	   DynamicMaterial;
-
+	TAutoWeakObjectPtr<UMaterialInstanceDynamic>	   BackgroundDynamicMI;
+	TAutoWeakObjectPtr<UMaterialInstanceDynamic>	  ProgressDynamicMI;
 	TAutoWeakObjectPtr<class ALrcHUD> OwnerHUD;
 
 	FText GetLyricText()const;
@@ -42,17 +43,17 @@ private:
 	FCurveSequence BeginPlayAnimation;
 
 	FCurveHandle PanelTransformCurve;
-
 	FCurveHandle TimeTransformCurve;
-
 	FCurveHandle TitleTransformCurve;
-
+	FCurveHandle  ProgressImageTransformCurve;
 
 	TOptional<FSlateRenderTransform> GetPanelImageTransform() const;
-
 	TOptional<FSlateRenderTransform> GetTimeTransform() const;
-
 	TOptional<FSlateRenderTransform> GetTitleTransform() const;
+	TOptional<FSlateRenderTransform> GetProgressImageTransform() const;
 
 
+	EVisibility GetLyricTextVisibility()const;
+
+	EActiveTimerReturnType UpdateProgressImage(double InCurrentTime, float InDeltaTime);
 };

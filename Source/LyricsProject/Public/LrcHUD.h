@@ -39,6 +39,8 @@ public:
 
 	float GetPlayedSeconds()const;
 
+	float GetPlayedProgress()const;
+
 	class USoundWave*  ImportMusicByFilePath(const FString& FileName);
 
 	class ULyricAsset* 	ImportLyricByFilePath(const FString& FileName);
