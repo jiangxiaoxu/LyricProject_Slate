@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 #include "SlateBasics.h"
@@ -21,6 +21,8 @@ public:
 	void Construct(const FArguments& InArgs);
 
 	void PlayStartAnimation();
+
+    void RollbackAnimation();
 private:
 	TAttribute<FText> TitleText;
 	FVector2D TitleTextSize;
@@ -39,7 +41,7 @@ private:
 
 	void SetupAnimation();
 
-	/*¿ØÖÆ¿ªÊ¼²¥·ÅÊ±µÄ¶¯»­*/
+	/*æŽ§åˆ¶å¼€å§‹æ’­æ”¾æ—¶çš„åŠ¨ç”»*/
 	FCurveSequence BeginPlayAnimation;
 
 	FCurveHandle PanelTransformCurve;

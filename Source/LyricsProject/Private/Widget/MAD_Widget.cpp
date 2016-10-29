@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "LyricsProject.h"
 #include "MAD_Widget.h"
@@ -152,6 +152,11 @@ void SMAD_Widget::PlayStartAnimation()
 //	RegisterActiveTimer(0, FWidgetActiveTimerDelegate::CreateSP(this, &SMAD_Widget::UpdateUVRegion));
 }
 
+void SMAD_Widget::RollbackAnimation()
+{
+    BeginPlayAnimation.PlayReverse(this->AsShared());
+}
+
 FText SMAD_Widget::GetLyricText() const
 {
 	if (OwnerHUD&&OwnerHUD->LyricAsset)
@@ -199,7 +204,7 @@ TOptional<FSlateRenderTransform> SMAD_Widget::GetProgressImageTransform() const
 {
 	float Lerp = ProgressImageTransformCurve.GetLerp();
 
-	if (FMath::IsNearlyEqual(Lerp, 0))	  //³õÊ¼Î´¿ªÊ¼²¥·ÅÊ±,ÉèÖÃ³É0ÒÔ·½±ãÒş²Ø
+	if (FMath::IsNearlyEqual(Lerp, 0))	  //åˆå§‹æœªå¼€å§‹æ’­æ”¾æ—¶,è®¾ç½®æˆ0ä»¥æ–¹ä¾¿éšè—
 	{
 		return	 FSlateRenderTransform(FScale2D(0));
 	}

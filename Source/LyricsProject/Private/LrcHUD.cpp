@@ -65,6 +65,11 @@ void ALrcHUD::PlaySound()
 		AudioComp->Play();
 
 		StaticCastSharedRef<SMAD_Widget>(MyWidget.ToSharedRef())->PlayStartAnimation();
+
+        FTimerHandle handle;
+
+     auto Delegate=   FTimerDelegate::CreateSP(StaticCastSharedRef<SMAD_Widget>(MyWidget.ToSharedRef()), &SMAD_Widget::RollbackAnimation);
+     GetWorldTimerManager().SetTimer(handle, Delegate, 10, false);
 	}
 }
 
